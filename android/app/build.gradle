@@ -8,10 +8,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    flutterRoot = System.getenv('FLUTTER_ROOT')
-    if (flutterRoot == null) {
-        throw new GradleException("Flutter SDK not found. Define FLUTTER_ROOT env var.")
-    }
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -29,7 +26,8 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdk 34
+    compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -45,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.locationhook.locationhook"
+        applicationId "com.example.locationhook"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
@@ -62,5 +60,3 @@ android {
 flutter {
     source '../..'
 }
-
-dependencies {}
