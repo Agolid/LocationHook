@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch((_currentPosition!.timestamp! * 1000).truncate()).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -549,12 +549,19 @@ class NotificationService {
   Future<void> initialize() async {
     _notifications = FlutterLocalNotificationsPlugin();
 
-    const androidSettings = AndroidInitializationSettings(
+    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
 
-    const initSettings = InitializationSettings(
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
+    );
+
+    final InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
+      iOS: iosSettings,
     );
 
     await _notifications!.initialize(initSettings);
@@ -564,15 +571,16 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       channelShowBadge: false,
       icon: '@mipmap/ic_launcher',
       importance: Importance.max,
       priority: Priority.high,
     );
 
-    const notificationDetails = NotificationDetails(
+    const NotificationDetails notificationDetails = NotificationDetails(
       android: androidDetails,
+      iOS: DarwinNotificationDetails(),
     );
 
     await _notifications!.show(
