@@ -42,6 +42,8 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    namespace "com.example.locationhook"
+
     defaultConfig {
         applicationId "com.example.locationhook"
         minSdkVersion 21
