@@ -360,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}'
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -567,6 +567,7 @@ class NotificationService {
     required String body,
   }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'high_importance_channel',
       channelShowBadge: false,
       icon: '@mipmap/ic_launcher',
       importance: Importance.max,
@@ -584,7 +585,7 @@ class NotificationService {
       0,
       title,
       notificationDetails,
-      payload: body,
+      body,
     );
   }
 }
