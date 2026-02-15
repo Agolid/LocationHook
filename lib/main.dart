@@ -3,18 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  final notificationService = NotificationService();
-  await notificationService.initialize();
-  
-  final backgroundService = BackgroundService();
-  await backgroundService.initialize();
-
+  await NotificationService().initialize();
   runApp(const LocationHookApp());
 }
 
@@ -138,16 +131,12 @@ class _HomePageState extends State<HomePage> {
         });
       });
 
-      final backgroundService = BackgroundService();
-      await backgroundService.startService();
-
       setState(() {
         _isTracking = true;
         _statusMessage = 'Tracking started';
       });
 
-      final notificationService = NotificationService();
-      await notificationService.showNotification(
+      await NotificationService().showNotification(
         title: 'Location Tracking',
         body: 'Background tracking started',
       );
@@ -159,16 +148,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _stopTracking() async {
-    final backgroundService = BackgroundService();
-    await backgroundService.stopService();
-
     setState(() {
       _isTracking = false;
       _statusMessage = 'Tracking stopped';
     });
 
-    final notificationService = NotificationService();
-    await notificationService.showNotification(
+    await NotificationService().showNotification(
       title: 'Location Tracking',
       body: 'Background tracking stopped',
     );
@@ -199,8 +184,7 @@ class _HomePageState extends State<HomePage> {
           _geofenceEnterCount++;
         });
 
-        final notificationService = NotificationService();
-        notificationService.showNotification(
+        NotificationService().showNotification(
           title: 'Geofence Entered',
           body: 'Entered: ${geofence.name}',
         );
@@ -209,8 +193,7 @@ class _HomePageState extends State<HomePage> {
           _geofenceExitCount++;
         });
 
-        final notificationService = NotificationService();
-        notificationService.showNotification(
+        NotificationService().showNotification(
           title: 'Geofence Exited',
           body: 'Exited: ${geofence.name}',
         );
@@ -377,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt()).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -565,77 +548,33 @@ class NotificationService {
       '@mipmap/ic_launcher',
     );
 
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
-    );
-
-    final InitializationSettings initSettings = InitializationSettings(
+    final initializationSettings = InitializationSettings(
       android: androidSettings,
-      iOS: iosSettings,
     );
 
-    await _notifications!.initialize(initSettings);
+    await _notifications!.initialize(initializationSettings);
   }
 
   Future<void> showNotification({
     required String title,
     required String body,
   }) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    final AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
       channelShowBadge: false,
       icon: '@mipmap/ic_launcher',
       importance: Importance.max,
       priority: Priority.high,
     );
 
-    const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails();
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
     );
 
     await _notifications!.show(
       0,
       title,
-      platformChannelSpecifics,
+      notificationDetails,
       payload: body,
     );
-  }
-}
-
-class BackgroundService {
-  static final BackgroundService _instance = BackgroundService._internal();
-
-  factory BackgroundService() => _instance;
-
-  BackgroundService._internal();
-
-  Future<void> initialize() async {
-    await FlutterBackgroundService().configure(
-      (iosConfiguration) {
-        iosConfiguration.setForegroundTaskOptions(
-          taskTitle: "Location Hook",
-          taskDescription: "Tracking location in background",
-        );
-      },
-      (androidConfiguration) {
-        androidConfiguration.setNotification(
-          title: "Location Hook",
-          content: "Tracking location in background",
-          id: 888,
-        );
-      },
-    );
-  }
-
-  Future<void> startService() async {
-    await FlutterBackgroundService().startService();
-  }
-
-  Future<void> stopService() async {
-    await FlutterBackgroundService().stopService();
   }
 }
