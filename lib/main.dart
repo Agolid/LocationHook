@@ -12,7 +12,7 @@ void main() async {
 }
 
 class LocationHookApp extends StatelessWidget {
-  const LocationHookApp({super.key});
+  const LocationHookApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class LocationHookApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -360,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt()).toLocalString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -548,26 +548,36 @@ class NotificationService {
       '@mipmap/ic_launcher',
     );
 
-    final initializationSettings = InitializationSettings(
-      android: androidSettings,
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
     );
 
-    await _notifications!.initialize(initializationSettings);
+    final InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
+    await _notifications!.initialize(initSettings);
   }
 
   Future<void> showNotification({
     required String title,
     required String body,
   }) async {
-    final AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       channelShowBadge: false,
       icon: '@mipmap/ic_launcher',
       importance: Importance.max,
       priority: Priority.high,
     );
 
-    final NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
+    const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails();
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
     );
 
     await _notifications!.show(
