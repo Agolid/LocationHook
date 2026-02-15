@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt()).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch((_currentPosition!.timestamp! * 1000).truncate()).toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -485,10 +485,8 @@ class Geofence {
   }
 
   static List<Geofence> parseList(String json) {
-    // Simple JSON parsing for geofences
     final geofences = <Geofence>[];
     
-    // Remove brackets and split by objects
     final cleanJson = json.replaceAll('[', '').replaceAll(']', '');
     if (cleanJson.isEmpty) return geofences;
 
