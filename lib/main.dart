@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt())}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt()).toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -394,7 +394,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(Icons.login, color: Colors.green),
+                                const Icon(Icons.check_circle, color: Colors.green),
                                 const SizedBox(width: 4),
                                 Text('Entered: $_geofenceEnterCount'),
                               ],
@@ -402,7 +402,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                const Icon(Icons.logout, color: Colors.red),
+                                const Icon(Icons.cancel, color: Colors.red),
                                 const SizedBox(width: 4),
                                 Text('Exited: $_geofenceExitCount'),
                               ],
@@ -435,7 +435,7 @@ class _HomePageState extends State<HomePage> {
                     else
                       ..._geofences.map((geofence) => ListTile(
                             leading: Icon(
-                              geofence.isInside ? Icons.place : Icons.place_outline,
+                              geofence.isInside ? Icons.place : Icons.map_outlined,
                               color: geofence.isInside ? Colors.green : Colors.grey,
                             ),
                             title: Text(geofence.name),
@@ -457,7 +457,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-            ),
           ],
         ),
       ),
