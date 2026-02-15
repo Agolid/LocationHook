@@ -8,9 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await NotificationService().initialize();
-  await BackgroundService().initialize();
+  
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+  
+  final backgroundService = BackgroundService();
+  await backgroundService.initialize();
 
   runApp(const LocationHookApp());
 }
@@ -112,12 +115,14 @@ class _HomePageState extends State<HomePage> {
         return;
       }
 
-      await Geolocator.getPositionStream(
+      final positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
           distanceFilter: 10,
         ),
-      ).listen((Position position) {
+      );
+
+      positionStream.listen((Position position) {
         setState(() {
           _currentPosition = position;
           _positionHistory.insert(0, position);
@@ -133,14 +138,16 @@ class _HomePageState extends State<HomePage> {
         });
       });
 
-      await BackgroundService().startService();
+      final backgroundService = BackgroundService();
+      await backgroundService.startService();
 
       setState(() {
         _isTracking = true;
         _statusMessage = 'Tracking started';
       });
 
-      await NotificationService().showNotification(
+      final notificationService = NotificationService();
+      await notificationService.showNotification(
         title: 'Location Tracking',
         body: 'Background tracking started',
       );
@@ -152,22 +159,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _stopTracking() async {
-    await BackgroundService().stopService();
+    final backgroundService = BackgroundService();
+    await backgroundService.stopService();
 
     setState(() {
       _isTracking = false;
       _statusMessage = 'Tracking stopped';
     });
 
-    await NotificationService().showNotification(
+    final notificationService = NotificationService();
+    await notificationService.showNotification(
       title: 'Location Tracking',
       body: 'Background tracking stopped',
     );
   }
 
   Future<bool> _hasLocationPermission() async {
-    return await Permission.locationWhenInUse.status.isGranted ||
-        await Permission.locationAlways.status.isGranted;
+    final locationWhenInUse = await Permission.locationWhenInUse.status.isGranted;
+    final locationAlways = await Permission.locationAlways.status.isGranted;
+    return locationWhenInUse || locationAlways;
   }
 
   void _checkGeofences(Position position) {
@@ -189,7 +199,8 @@ class _HomePageState extends State<HomePage> {
           _geofenceEnterCount++;
         });
 
-        NotificationService().showNotification(
+        final notificationService = NotificationService();
+        notificationService.showNotification(
           title: 'Geofence Entered',
           body: 'Entered: ${geofence.name}',
         );
@@ -198,7 +209,8 @@ class _HomePageState extends State<HomePage> {
           _geofenceExitCount++;
         });
 
-        NotificationService().showNotification(
+        final notificationService = NotificationService();
+        notificationService.showNotification(
           title: 'Geofence Exited',
           body: 'Exited: ${geofence.name}',
         );
@@ -365,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp! * 1000).toString()}',
+                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!.toInt()).toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
@@ -571,22 +583,24 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       channelShowBadge: false,
       icon: '@mipmap/ic_launcher',
       importance: Importance.max,
       priority: Priority.high,
     );
 
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: DarwinNotificationDetails(),
+    const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails();
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
     );
 
     await _notifications!.show(
       0,
       title,
-      notificationDetails,
+      platformChannelSpecifics,
       payload: body,
     );
   }
