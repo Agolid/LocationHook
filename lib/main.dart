@@ -532,6 +532,7 @@ class Geofence {
   }
 }
 
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 
@@ -539,53 +540,16 @@ class NotificationService {
 
   NotificationService._internal();
 
-  FlutterLocalNotificationsPlugin? _notifications;
-
   Future<void> initialize() async {
-    _notifications = FlutterLocalNotificationsPlugin();
-
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
-
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
-    );
-
-    final InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _notifications!.initialize(initSettings);
+    // 最简单的初始化，什么都不做
   }
 
   Future<void> showNotification({
     required String title,
     required String body,
   }) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'high_importance_channel',
-      channelShowBadge: false,
-      icon: '@mipmap/ic_launcher',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const DarwinNotificationDetails iOSPlatformChannelSpecifics = DarwinNotificationDetails();
-
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-    );
-
-    await _notifications!.show(
-      0,
-      title,
-      notificationDetails,
-      body,
-    );
+    // 最简单的实现，只打印到控制台
+    print('Notification: $title - $body');
   }
 }
+

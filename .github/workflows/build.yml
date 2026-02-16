@@ -1,16 +1,24 @@
-name: Flutter CI
+name: Build APK
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -18,6 +26,9 @@ jobs:
           flutter-version: '3.16.0'
           channel: 'stable'
           cache: true
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
 
       - name: Get dependencies
         run: flutter pub get
@@ -28,7 +39,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release.apk
+          name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: warn
           retention-days: 30
