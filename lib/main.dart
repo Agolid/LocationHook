@@ -55,30 +55,38 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _checkPermissions() async {
     final status = await Permission.locationWhenInUse.request();
-    if (status.isDenied) {
-      setState(() {
-        _statusMessage = 'Location permission denied';
-      });
-      return;
-    }
-
     final alwaysStatus = await Permission.locationAlways.request();
-    if (alwaysStatus.isGranted) {
-      setState(() {
-        _statusMessage = 'All permissions granted';
-      });
+    final notificationStatus = await Permission.notification.request();
+
+    String message = 'Permissions: ';
+
+    if (status.isGranted) {
+      message += 'Location ✓ ';
+    } else if (status.isDenied) {
+      message += 'Location ✗ ';
     } else {
-      setState(() {
-        _statusMessage = 'Background location permission not granted';
-      });
+      message += 'Location pending ';
     }
 
-    final notificationStatus = await Permission.notification.request();
-    if (notificationStatus.isDenied) {
-      setState(() {
-        _statusMessage = 'Notification permission denied';
-      });
+    if (alwaysStatus.isGranted) {
+      message += 'Background ✓ ';
+    } else if (alwaysStatus.isDenied) {
+      message += 'Background ✗ ';
+    } else {
+      message += 'Background pending ';
     }
+
+    if (notificationStatus.isGranted) {
+      message += 'Notification ✓';
+    } else if (notificationStatus.isDenied) {
+      message += 'Notification ✗';
+    } else {
+      message += 'Notification pending';
+    }
+
+    setState(() {
+      _statusMessage = message;
+    });
   }
 
   Future<void> _loadGeofences() async {
