@@ -360,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       if (_currentPosition!.timestamp != null)
                         Text(
-                          'Updated: ${DateTime.fromMillisecondsSinceEpoch(_currentPosition!.timestamp!).toString()}',
+                          'Updated: ${_currentPosition!.timestamp!.toString()}',
                           style: const TextStyle(fontSize: 14),
                         ),
                     ],
