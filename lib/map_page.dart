@@ -79,6 +79,24 @@ class _MapPageState extends State<MapPage> {
         title: const Text('位置钩子'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.center_focus_strong),
+            onPressed: _currentLocation != null && _mapController != null
+                ? () {
+                    _mapController!.moveCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: _currentLocation!,
+                          zoom: 16,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+            tooltip: '回到当前位置',
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -87,6 +105,9 @@ class _MapPageState extends State<MapPage> {
               setState(() {
                 _mapController = controller;
               });
+
+              // 设置地图初始状态
+              controller.setMapType(AMapType.normal);
 
               if (_currentLocation != null) {
                 controller.moveCamera(
@@ -106,9 +127,15 @@ class _MapPageState extends State<MapPage> {
             scrollGesturesEnabled: true,
             tiltGesturesEnabled: true,
             rotateGesturesEnabled: true,
+            compassEnabled: true,
+            scaleControlsEnabled: true,
+            logoPosition: LogoPosition.bottomRight,
             myLocationEnabled: true,
             myLocationStyleOptions: const MyLocationStyleOptions(
               myLocationIcon: MyLocationIcon.asset('assets/images/location_marker.png'),
+              circleFillColor: Color.fromARGB(50, 0, 0, 255),
+              circleStrokeColor: Color.fromARGB(150, 0, 0, 255),
+              circleStrokeWidth: 2.0,
             ),
             markers: _currentLocation != null
                 ? [
