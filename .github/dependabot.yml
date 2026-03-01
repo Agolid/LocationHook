@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Enable version updates for pub (Dart/Flutter)
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    groups:
+      patch-dependencies:
+        patterns:
+          - "patch"
+      minor-dependencies:
+        patterns:
+          - "minor"
+      major-dependencies:
+        patterns:
+          - "major"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
