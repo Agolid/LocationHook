@@ -1,32 +1,31 @@
 version: 2
 updates:
-  # Enable version updates for pub (Dart/Flutter)
+  # pub依赖自动更新
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
+      timezone: "Asia/Shanghai"
     open-pull-requests-limit: 10
-    groups:
-      patch-dependencies:
-        patterns:
-          - "patch"
-      minor-dependencies:
-        patterns:
-          - "minor"
-      major-dependencies:
-        patterns:
-          - "major"
+    reviewers:
+      - "Agolid"
+    labels:
+      - "dependencies"
+      - "pub"
 
-  # Enable version updates for GitHub Actions
+  # GitHub Actions自动更新
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
-    groups:
-      github-actions:
-        patterns:
-          - "*"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "Agolid"
+    labels:
+      - "dependencies"
+      - "github-actions"
