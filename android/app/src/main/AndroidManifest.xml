@@ -4,11 +4,13 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="locationhook"
+        android:label="LocationHook"
         android:name="${applicationName}"
-        android:icon="@drawable/ic_launcher">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,9 +31,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!-- 高德地图API Key -->
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="你的高德地图API Key" />
     </application>
 </manifest>

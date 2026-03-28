@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_amap/flutter_amap.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'pages/home_page.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const LocationHookApp());
 }
 
 class LocationHookApp extends StatelessWidget {
-  const LocationHookApp({Key? key}) : super(key: key);
+  const LocationHookApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'LocationHook',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
@@ -22,7 +21,7 @@ class LocationHookApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MapPage(),
+      home: const HomePage(),
     );
   }
 }

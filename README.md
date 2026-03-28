@@ -1,82 +1,85 @@
 # LocationHook
 
-LocationHook - Android位置追踪应用，使用Flutter构建，支持地理围栏和后台位置服务。
+Android location tracking app built with Flutter. Features geofencing, background location service, and real-time notifications.
 
-## 项目简介
+## Features
 
-基于Flutter开发的Android位置追踪应用，使用geolocator插件获取高精度位置，支持地理围栏检测和后台位置服务。
+- ✅ High-precision location tracking (geolocator)
+- ✅ Real-time map display (OpenStreetMap via flutter_map — no API key needed)
+- ✅ Geofencing
+  - Create / edit / delete geofences with custom name, coordinates & radius
+  - Enter / exit detection with visual indicator
+  - Enter / exit counters
+- ✅ Background location service (flutter_background_service)
+- ✅ Geofence notifications (flutter_local_notifications)
+  - Green notification on enter
+  - Red notification on exit
+- ✅ Location history (last 100 points, persisted locally)
+- ✅ Permission management (location, background location, notifications)
 
-## 功能特性
+## Tech Stack
 
-- ✅ 高精度位置追踪（geolocator）
-- ✅ 实时位置显示（经度、纬度、精度）
-- ✅ 地理围栏功能
-  - 创建、删除地理围栏
-  - 进出检测
-  - 进出计数
-- ✅ 后台位置服务（flutter_background_service）
-- ✅ 位置变化通知（flutter_local_notifications）
-- ✅ 位置历史记录（最近100个位置点）
-- ✅ 权限管理（位置权限、通知权限）
+- Flutter 3.16+
+- Dart 3.0+
+- `geolocator` — GPS positioning
+- `flutter_map` + OpenStreetMap — map display (free, no API key)
+- `flutter_background_service` — background tracking
+- `flutter_local_notifications` — geofence alerts
+- `shared_preferences` — local persistence
+- `latlong2` — coordinate math
+- `uuid` — unique geofence IDs
 
-## 技术栈
+## Build
 
-- Flutter 3.16.0
-- Dart
-- geolocator: ^10.1.0
-- permission_handler: ^11.0.1
-- flutter_background_service: ^5.0.5
-- flutter_local_notifications: ^16.3.0
-- shared_preferences: ^2.2.2
+### Prerequisites
 
-## 构建说明
-
-### 前置要求
-
-- Flutter SDK 3.0+
+- Flutter SDK 3.16+
 - Android SDK 34
 - Java 17
 
-### 本地构建
+### Local build
 
 ```bash
-cd LocationHook
 flutter pub get
 flutter build apk
 ```
 
 ### GitHub Actions
 
-项目配置了GitHub Actions自动构建，每次推送到master分支会自动构建APK。
+Push to `master` triggers automatic APK build. Artifact is available for download from the Actions tab.
 
-## 开发状态
+## Usage
 
-✅ 已完成v1.0.0功能
+1. **First launch** — Grant location and notification permissions
+2. **Start Tracking** — Tap the green button to begin background location tracking
+3. **Add Geofence** — Tap the bookmark icon → tap + → enter name, coordinates, and radius
+4. **Geofence Alerts** — You'll get notifications when entering (green) or exiting (red) a geofence
+5. **Stop Tracking** — Tap the red button to stop
 
-- [x] Flutter项目基础架构
-- [x] 高精度位置追踪
-- [x] 地理围栏功能
-- [x] 后台位置服务
-- [x] 通知系统
-- [x] 位置历史记录
-- [x] 权限管理
-- [x] Material Design 3 UI
+## Project Structure
 
-## 使用说明
+```
+lib/
+├── main.dart                      # App entry point
+├── models/
+│   ├── geofence.dart              # Geofence data model
+│   └── location_point.dart        # Location history model
+├── services/
+│   ├── location_service.dart      # Location tracking + persistence
+│   ├── geofence_service.dart      # Geofence detection (haversine)
+│   └── notification_service.dart  # Local notifications
+└── pages/
+    ├── home_page.dart             # Main map + tracking UI
+    └── geofence_page.dart         # Geofence CRUD UI
+```
 
-1. **首次启动**：应用会请求位置权限和通知权限
-2. **开始追踪**：点击"Start Tracking"按钮开始后台位置追踪
-3. **添加地理围栏**：点击右上角"+"按钮添加地理围栏
-   - 输入围栏名称
-   - 设置中心点坐标（纬度、经度）
-   - 设置半径（米）
-4. **地理围栏检测**：
-   - 进入围栏：显示绿色通知，"Entered"计数+1
-   - 离开围栏：显示红色通知，"Exited"计数+1
-5. **停止追踪**：点击"Stop Tracking"按钮停止后台服务
+## Notes
 
-## 注意事项
+- Background tracking requires "Always allow" location permission
+- Android 10+ requires precise location permission for high accuracy
+- Map tiles are from OpenStreetMap (free, no API key needed)
+- All data is stored locally on the device
 
-- 后台位置追踪需要"Always allow"位置权限
-- Android 10+需要精确位置权限才能使用高精度定位
-- 通知权限用于显示地理围栏进出提醒
+## License
+
+MIT
