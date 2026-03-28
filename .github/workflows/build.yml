@@ -1,8 +1,10 @@
-name: Build APK
+name: Build and Release
 
 on:
   push:
     branches: [ master ]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -27,9 +29,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Verify Flutter installation
-        run: flutter doctor -v
-
       - name: Get dependencies
         run: flutter pub get
 
@@ -39,7 +38,26 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(grep -E "^version:" pubspec.yaml | awk '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Upload Release APK
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Artifact (for manual download)
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
