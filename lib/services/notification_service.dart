@@ -32,9 +32,7 @@ class NotificationService {
       channelDescription: 'Notifications for geofence enter/exit events',
       importance: Importance.high,
       priority: Priority.high,
-      color: entered
-          ? const AndroidColor(0xFF4CAF50) // green
-          : const AndroidColor(0xFFF44336), // red
+      color: entered ? const Color(0xFF4CAF50) : const Color(0xFFF44336),
     );
 
     const iosDetails = DarwinNotificationDetails();

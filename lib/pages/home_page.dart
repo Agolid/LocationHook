@@ -115,8 +115,8 @@ class _HomePageState extends State<HomePage> {
                         point: _currentLocation!,
                         radius: _accuracy!,
                         useRadiusInMeter: true,
-                        color: Colors.blue.withValues(alpha: 0.15),
-                        borderColor: Colors.blue.withValues(alpha: 0.5),
+                        color: Colors.blue.withOpacity(0.15),
+                        borderColor: Colors.blue.withOpacity(0.5),
                         borderStrokeWidth: 1,
                       ),
                   ],
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, -2),
                 ),
