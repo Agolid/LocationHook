@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   double? _speed;
   StreamSubscription<LocationPoint>? _locationSub;
   final MapController _mapController = MapController();
+  bool _userInteracted = false;
 
   @override
   void initState() {
@@ -40,7 +41,9 @@ class _HomePageState extends State<HomePage> {
         _accuracy = point.accuracy;
         _speed = point.speed;
       });
-      _mapController.move(_currentLocation!, 16);
+      if (!_userInteracted && _currentLocation != null) {
+        _mapController.move(_currentLocation!, 16);
+      }
     });
 
     // Get initial position
@@ -101,11 +104,17 @@ class _HomePageState extends State<HomePage> {
               options: MapOptions(
                 initialCenter: _currentLocation ?? const LatLng(39.9, 116.4),
                 initialZoom: 14,
+                onMapEvent: (event) {
+                  if (event.source == MapEventSource.mapController) return;
+                  if (event is! MapEventMove && event is! MapEventRotate && event is! MapEventFlingAnimation && event is! MapEventScrollWheelZoom) return;
+                  if (!_userInteracted) setState(() => _userInteracted = true);
+                },
               ),
               children: [
                 TileLayer(
                   urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+                  subdomains: const ['1', '2', '3', '4'],
                   userAgentPackageName: 'com.agolid.locationhook',
                 ),
                 CircleLayer(
@@ -206,6 +215,16 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: _currentLocation != null
+          ? FloatingActionButton(
+              onPressed: () {
+                _mapController.move(_currentLocation!, 16);
+                setState(() => _userInteracted = false);
+              },
+              mini: true,
+              child: const Icon(Icons.my_location),
+            )
+          : null,
     );
   }
 
